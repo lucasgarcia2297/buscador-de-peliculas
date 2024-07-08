@@ -2,31 +2,38 @@ import './App.css'
 import { useMovies } from './hooks/useMovies'
 import { Movies } from './Components/Movies';
 import { useSearch } from './hooks/useSearch'
+import { useState } from 'react';
 
 function App() {
+  const [sort, setSort] = useState(false);
   const { search, updateSearch, error } = useSearch();
-  const { movies, loading, getMovies } = useMovies({search});
+  const { movies, loading, getMovies } = useMovies({search, sort});
 
-  const handlerSubmit = (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
-    getMovies();
+    getMovies({ search });
   }
 
-  const handlerChange = (event) => {
+  const handleSort = () => {
+    setSort(!sort);
+  }
+  const handleChange = (event) => {
     const newSearch = event.target.value;
     if (newSearch.startsWith(' ')) return;
     updateSearch(newSearch);
+    getMovies({ search:newSearch });
   }
   return (
     <div className='page'>
       <header>
         <h1>Buscador de Películas</h1>
-        <form className="form" onSubmit={handlerSubmit}>
+        <form className="form" onSubmit={handleSubmit}>
           <input style={{
             border: '1px solid transparent',
             borderColor: error ? 'red' : 'transparent' 
             }}
-            onChange={handlerChange} value={search} name='query' placeholder='Avengers, Star Wars, Toy Story...' />
+            onChange={handleChange} value={search} name='query' placeholder='Avengers, Star Wars, Toy Story...' />
+          <input type='checkbox' onChange={handleSort} checked={sort}/>
           <button type='submit'>Buscar</button>
         </form>
         {error && <p style={{color: 'red'}}>{error}</p>}

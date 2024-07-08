@@ -4,11 +4,12 @@ import { Movies } from './Components/Movies';
 import { useSearch } from './hooks/useSearch'
 
 function App() {
-  const { movies } = useMovies();
   const { search, updateSearch, error } = useSearch();
+  const { movies, loading, getMovies } = useMovies({search});
 
   const handlerSubmit = (event) => {
     event.preventDefault();
+    getMovies();
   }
 
   const handlerChange = (event) => {
@@ -31,7 +32,10 @@ function App() {
         {error && <p style={{color: 'red'}}>{error}</p>}
       </header>
       <main>
-        <Movies movies={ movies }/>
+        {
+          loading ? <p>Cargando...</p> :
+          <Movies movies={ movies }/>
+        }
       </main>
     </div>
   )
